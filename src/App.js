@@ -4,12 +4,27 @@ import AddSong from './components/AddSong';
 import SongList from './components/SongList';
 import SongPlayer from './components/SongPlayer';
 import { Grid, useMediaQuery, Hidden } from '@material-ui/core';
+import songReducer from './reducer';
+
+export const SongContext = React.createContext({
+  song: {
+    id: '04832f6d-382b-42dc-8bac-1cd3e03af42e',
+    title: 'Petal Fortune',
+    artist: 'PERC%NT',
+    thumbnail: 'http://img.youtube.com/vi/NaYS4eKYhjc/0.jpg',
+    url: 'https://www.youtube.com/watch?v=NaYS4eKYhjc',
+    duration: 230
+  },
+  isPlaying: false
+})
 
 function App() {
+  const initialSongState = React.useContext(SongContext);
+  const [state, dispatch] = React.useReducer(songReducer, initialSongState);
   const greaterThanSm = useMediaQuery(theme => theme.breakpoints.up('sm'));
   const greaterThanMd = useMediaQuery(theme => theme.breakpoints.up('md'));
   return (
-    <>
+    <SongContext.Provider value={{ state, dispatch }}>
       {/* {greaterThanSm && <Header />} */}
       <Hidden only="xs">
         <Header />
@@ -44,7 +59,7 @@ function App() {
           <SongPlayer />
         </Grid>
       </Grid>
-    </>
+    </SongContext.Provider>
   );
 }
 

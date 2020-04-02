@@ -1,7 +1,8 @@
 import React from 'react';
 import QueuedSongList from './QueuedSongList';
 import { Card, CardContent, Typography, IconButton, Slider, CardMedia, makeStyles } from '@material-ui/core';
-import { SkipPrevious, PlayArrow, SkipNext } from '@material-ui/icons';
+import { SkipPrevious, PlayArrow, SkipNext, Pause } from '@material-ui/icons';
+import { SongContext } from '../App';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -32,25 +33,30 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function SongPlayer(){
+  const { state, dispatch } = React.useContext(SongContext)
   const classes = useStyles();
+  function handleTogglePlay(){
+    dispatch(state.isPlaying ? { type: "PAUSE_SONG" } : { type: "PLAY_SONG" });
+  }
+
   return (
     <>
       <Card className={classes.container} variant="outlined">
         <div className={classes.details}>
           <CardContent className={classes.content}>
             <Typography variant="h5" component="h3">
-              Title
+              {state.song.title}
             </Typography>
             <Typography variant="subtitle1" component="p" color="textSecondary">
-              Artist
+              {state.song.artist}
             </Typography>
           </CardContent>
           <div className={classes.controls}>
             <IconButton>
               <SkipPrevious />
             </IconButton>
-            <IconButton>
-              <PlayArrow className={classes.playIcon}/>
+            <IconButton onClick={handleTogglePlay}>
+              {state.isPlaying ? <Pause className={classes.playIcon}/> : <PlayArrow className={classes.playIcon}/>}
             </IconButton>
             <IconButton>
               <SkipNext />
@@ -68,7 +74,7 @@ function SongPlayer(){
         </div>
         <CardMedia
           className={classes.thumbnail}
-          image="https://i1.sndcdn.com/artworks-000670470790-ej1gvb-t500x500.jpg"
+          image={state.song.thumbnail}
         />
       </Card>
       <QueuedSongList />

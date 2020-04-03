@@ -41,8 +41,23 @@ function SongPlayer(){
   const [played, setPlayed] = React.useState(0);
   const [seeking, setSeeking] = React.useState(false);
   const [playedSeconds, setPlayedSeconds] = React.useState(0);
+  const [positionInQueue, setPositionInQueue] = React.useState(0);
   const reactPlayerRef = React.useRef();
   const classes = useStyles();
+
+  React.useEffect(() => {
+    const songIndex = data.queue.findIndex(song => song.id === state.song.id);
+    setPositionInQueue(songIndex);
+  }, [data.queue, state.song.id]);
+
+  React.useEffect(() => {
+    const nextSong = data.queue[positionInQueue + 1];
+    if(nextSong && played===1){
+      setPlayed(0);
+      dispatch({ type: "SET_SONG", payload: { song: nextSong } });
+    }
+  }, [data.queue, played, dispatch, positionInQueue]);
+
   function handleTogglePlay(){
     dispatch(state.isPlaying ? { type: "PAUSE_SONG" } : { type: "PLAY_SONG" });
   }
